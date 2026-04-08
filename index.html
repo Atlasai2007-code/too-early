@@ -312,20 +312,21 @@
       if (marker < goodStart) {
         const gain = Math.round(8 + combo * 0.5);
         score += gain;
-        feedback = { text: 'EARLY', sub: `+${gain}`, color: '#60a5fa', life: 0.7 };
+        roundSpeed += 0.07;
+        feedback = { text: 'EARLY', sub: `+${gain} • SPEED UP`, color: '#60a5fa', life: 0.7 };
       } else if (marker < perfectStart) {
         combo += 1;
         const gain = Math.round((20 + combo * 3) * (1 + roundSpeed));
         score += gain;
-        feedback = { text: 'GOOD', sub: `+${gain}`, color: '#22c55e', life: 0.7 };
+        roundSpeed += 0.03;
+        feedback = { text: 'GOOD', sub: `+${gain} • STEADY`, color: '#22c55e', life: 0.7 };
       } else {
         combo += 2;
         const gain = Math.round((45 + combo * 5) * (1 + roundSpeed));
         score += gain;
-        feedback = { text: 'PERFECT', sub: `+${gain}`, color: '#8b5cf6', life: 0.8 };
+        roundSpeed += 0.008;
+        feedback = { text: 'PERFECT', sub: `+${gain} • CONTROLLED`, color: '#8b5cf6', life: 0.8 };
       }
-
-      roundSpeed = Math.min(1.15, roundSpeed + 0.025);
       if (score > best) {
         best = score;
         localStorage.setItem('too-early-best', String(best));
