@@ -6,15 +6,15 @@
   <title>Too Early</title>
   <style>
     :root {
-      --bg: #050a13;
-      --panel: rgba(8, 14, 24, 0.96);
-      --text: #f8fbff;
-      --muted: #9db2cd;
-      --cyan: #22d3ee;
-      --yellow: #fbbf24;
-      --green: #34d399;
-      --purple: #a855f7;
-      --danger: #fb7185;
+      --bg: #0b0d10;
+      --panel: rgba(15, 17, 21, 0.97);
+      --text: #f5f5f5;
+      --muted: #9ca3af;
+      --early: #d1d5db;
+      --good: #a3a3a3;
+      --perfect: #737373;
+      --danger: #262626;
+      --line: #ffffff;
     }
 
     * { box-sizing: border-box; }
@@ -30,10 +30,7 @@
       display: grid;
       place-items: center;
       padding: 4px;
-      background:
-        radial-gradient(circle at top, rgba(168,85,247,0.12), transparent 34%),
-        radial-gradient(circle at bottom, rgba(251,113,133,0.12), transparent 36%),
-        linear-gradient(180deg, #0b1524 0%, #050a13 100%);
+      background: linear-gradient(180deg, #111315 0%, #0b0d10 100%);
       color: var(--text);
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     }
@@ -41,7 +38,7 @@
     .phone {
       width: min(100vw, 460px);
       height: min(100vh, 980px);
-      background: linear-gradient(180deg, rgba(13,20,33,0.98), rgba(7,12,21,0.98));
+      background: linear-gradient(180deg, rgba(20,22,26,0.98), rgba(12,14,17,0.98));
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 34px;
       box-shadow: 0 40px 100px rgba(0,0,0,.45);
@@ -178,7 +175,7 @@
       font-weight: 900;
       font-size: 1rem;
       cursor: pointer;
-      background: linear-gradient(135deg, #9333ea, #7c3aed);
+      background: linear-gradient(135deg, #2b2f36, #1b1e23);
       color: white;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 12px 30px rgba(0,0,0,.25);
     }
@@ -315,17 +312,17 @@
       if (marker < goodStart) {
         const gain = Math.round(8 + combo * 0.5);
         score += gain;
-        feedback = { text: 'EARLY', sub: `+${gain}`, color: '#22d3ee', life: 0.7 };
+        feedback = { text: 'EARLY', sub: `+${gain}`, color: '#e5e7eb', life: 0.7 };
       } else if (marker < perfectStart) {
         combo += 1;
         const gain = Math.round((20 + combo * 3) * (1 + roundSpeed));
         score += gain;
-        feedback = { text: 'GOOD', sub: `+${gain}`, color: '#34d399', life: 0.7 };
+        feedback = { text: 'GOOD', sub: `+${gain}`, color: '#d4d4d8', life: 0.7 };
       } else {
         combo += 2;
         const gain = Math.round((45 + combo * 5) * (1 + roundSpeed));
         score += gain;
-        feedback = { text: 'PERFECT', sub: `+${gain}`, color: '#a855f7', life: 0.8 };
+        feedback = { text: 'PERFECT', sub: `+${gain}`, color: '#ffffff', life: 0.8 };
       }
 
       roundSpeed = Math.min(1.15, roundSpeed + 0.025);
@@ -363,9 +360,9 @@
 
     function drawBackground() {
       const grad = ctx.createLinearGradient(0, 0, 0, H);
-      grad.addColorStop(0, '#142338');
-      grad.addColorStop(0.6, '#0c1727');
-      grad.addColorStop(1, '#08111b');
+      grad.addColorStop(0, '#181b20');
+      grad.addColorStop(0.6, '#111317');
+      grad.addColorStop(1, '#0b0d10');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, W, H);
 
@@ -395,19 +392,19 @@
       const zoneW = TRACK_W;
       const zoneX = TRACK_X;
 
-      ctx.fillStyle = 'rgba(34,211,238,0.38)';
+      ctx.fillStyle = 'rgba(209,213,219,0.55)';
       ctx.fillRect(zoneX, TRACK_Y, zoneW, earlyH);
 
-      ctx.fillStyle = 'rgba(52,211,153,0.52)';
+      ctx.fillStyle = 'rgba(163,163,163,0.75)';
       ctx.fillRect(zoneX, TRACK_Y + earlyH, zoneW, goodH);
 
-      ctx.fillStyle = 'rgba(168,85,247,0.6)';
+      ctx.fillStyle = 'rgba(115,115,115,0.92)';
       ctx.fillRect(zoneX, TRACK_Y + earlyH + goodH, zoneW, perfectH);
 
-      ctx.fillStyle = 'rgba(251,113,133,0.9)';
+      ctx.fillStyle = 'rgba(38,38,38,1)';
       ctx.fillRect(zoneX, perfectBottom + deadGap, zoneW, deadH);
 
-      ctx.fillStyle = '#eef8ff';
+      ctx.fillStyle = '#f5f5f5';
       ctx.font = '700 12px Inter, sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText('EARLY', W / 2, TRACK_Y - 14);
@@ -419,8 +416,8 @@
     function drawMarker() {
       const y = TRACK_Y + TRACK_H * marker;
 
-      ctx.strokeStyle = '#f8fbff';
-      ctx.shadowColor = 'rgba(255,255,255,0.72)';
+      ctx.strokeStyle = '#ffffff';
+      ctx.shadowColor = 'rgba(255,255,255,0.28)';
       ctx.shadowBlur = 18;
       ctx.lineWidth = 4;
       ctx.lineCap = 'butt';
