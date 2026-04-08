@@ -8,14 +8,12 @@
     :root {
       --bg-top: #d8e8ff;
       --bg-bottom: #edf5ff;
-      --shell-top: rgba(255,255,255,0.96);
-      --shell-bottom: rgba(242,247,255,0.97);
-      --panel: rgba(255,255,255,0.76);
-      --panel-border: rgba(148,163,184,0.18);
       --text: #142033;
       --muted: #64748b;
-      --track-bg: #f4f8ff;
-      --track-outline: rgba(59,130,246,0.16);
+      --track-bg: rgba(255,255,255,0.92);
+      --track-outline: rgba(59,130,246,0.12);
+      --hud-bg: rgba(255,255,255,0.82);
+      --hud-border: rgba(148,163,184,0.18);
       --early: #9fc5ff;
       --good: #91f0b0;
       --perfect: #ccb7ff;
@@ -28,79 +26,26 @@
     * { box-sizing: border-box; }
 
     html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
       overscroll-behavior: none;
       touch-action: manipulation;
+      overflow: hidden;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
     }
 
     body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 0;
-      background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
       color: var(--text);
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    }
-
-    .phone {
-      width: min(100vw, 460px);
-      height: min(100dvh, 980px);
-      background: linear-gradient(180deg, var(--shell-top), var(--shell-bottom));
-      border: 1px solid rgba(255,255,255,0.7);
-      border-radius: 36px;
-      box-shadow:
-        0 40px 100px rgba(55, 84, 170, 0.18),
-        inset 0 1px 0 rgba(255,255,255,0.7);
-      overflow: hidden;
-      position: relative;
-    }
-
-    .notch {
-      position: absolute;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 150px;
-      height: 28px;
-      background: rgba(15,20,30,0.6);
-      border-radius: 0 0 18px 18px;
-      z-index: 3;
-      backdrop-filter: blur(8px);
     }
 
     .app {
-      height: 100%;
-      padding: 16px 14px 14px;
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      gap: 12px;
-    }
-
-    .topbar {
-      padding-top: 16px;
-    }
-
-    h1 {
-      margin: 16px 0 0;
-      font-size: 2.05rem;
-      line-height: 0.95;
-      letter-spacing: -0.06em;
-      font-weight: 950;
-      color: #111c2e;
-    }
-
-    .game-wrap {
-      position: relative;
-      border-radius: 30px;
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100dvh;
       overflow: hidden;
-      min-height: 0;
-      height: 100%;
-      background: linear-gradient(180deg, #edf4ff 0%, #f8fbff 100%);
-      border: 1px solid rgba(148,163,184,0.16);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.85),
-        0 10px 30px rgba(148,163,184,0.14);
     }
 
     canvas {
@@ -111,50 +56,45 @@
     }
 
     .overlay {
-      position: absolute;
+      position: fixed;
       inset: 0;
       display: grid;
       place-items: center;
-      text-align: center;
-      padding: 20px;
-      background: linear-gradient(rgba(248,251,255,0.15), rgba(237,244,255,0.74));
-      pointer-events: none;
+      padding: 24px;
+      background: linear-gradient(rgba(248,251,255,0.18), rgba(237,244,255,0.72));
       backdrop-filter: blur(6px);
+      z-index: 5;
     }
 
     .overlay.hidden { display: none; }
 
     .overlay-box {
-      width: 100%;
-      max-width: 320px;
-      background: rgba(255,255,255,0.84);
+      width: min(100%, 360px);
+      background: rgba(255,255,255,0.86);
       border: 1px solid rgba(148,163,184,0.18);
-      border-radius: 24px;
-      padding: 20px;
-      box-shadow: 0 24px 60px rgba(94, 122, 177, 0.18);
+      border-radius: 26px;
+      padding: 22px;
+      box-shadow: 0 24px 60px rgba(94,122,177,0.18);
+      text-align: center;
     }
 
-    .overlay h2 {
+    .overlay h1 {
       margin: 0 0 8px;
-      font-size: 1.6rem;
-      letter-spacing: -0.04em;
-      color: #101b2d;
+      font-size: 2rem;
+      line-height: 0.95;
+      letter-spacing: -0.06em;
+      color: #111c2e;
     }
 
     .overlay p {
-      margin: 0;
+      margin: 0 0 18px;
       color: #51627d;
       line-height: 1.5;
-      font-size: 0.98rem;
+      font-size: 1rem;
     }
 
-    .controls {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-
-    button {
+    .overlay button {
+      width: 100%;
       appearance: none;
       border: none;
       border-radius: 20px;
@@ -171,26 +111,15 @@
   </style>
 </head>
 <body>
-  <div class="phone">
-    <div class="notch"></div>
-    <div class="app">
-      <div class="topbar">
-        <h1>TOO EARLY</h1>
-      </div>
+  <div class="app">
+    <canvas id="game"></canvas>
+  </div>
 
-      <div class="game-wrap">
-        <canvas id="game"></canvas>
-        <div class="overlay" id="overlay">
-          <div class="overlay-box">
-            <h2 id="overlayTitle">Tap Start</h2>
-            <p id="overlayText">Tap before the line reaches DEAD. Later taps score more. Perfect taps keep the speed under control.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="controls">
-        <button id="startBtn">Start / Restart</button>
-      </div>
+  <div class="overlay" id="overlay">
+    <div class="overlay-box">
+      <h1 id="overlayTitle">TOO EARLY</h1>
+      <p id="overlayText">Tap before the line reaches DEAD. Later taps score more. Perfect taps keep the speed under control.</p>
+      <button id="overlayBtn">Play</button>
     </div>
   </div>
 
@@ -200,7 +129,7 @@
     const overlay = document.getElementById('overlay');
     const overlayTitle = document.getElementById('overlayTitle');
     const overlayText = document.getElementById('overlayText');
-    const startBtn = document.getElementById('startBtn');
+    const overlayBtn = document.getElementById('overlayBtn');
 
     let W = 0;
     let H = 0;
@@ -209,9 +138,10 @@
     let TRACK_X = 0;
     let TRACK_Y = 0;
 
-    let state = 'idle';
+    let state = 'menu';
     let raf = null;
     let lastTime = 0;
+    let firstLaunch = true;
 
     let score = 0;
     let best = Number(localStorage.getItem('too-early-best') || 0);
@@ -232,10 +162,10 @@
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       W = rect.width;
       H = rect.height;
-      TRACK_W = Math.max(96, Math.min(118, W * 0.24));
-      TRACK_H = H - 210;
+      TRACK_W = Math.max(96, Math.min(120, W * 0.24));
+      TRACK_H = Math.max(320, H - 250);
       TRACK_X = W / 2 - TRACK_W / 2;
-      TRACK_Y = 138;
+      TRACK_Y = 170;
     }
 
     function resetGame() {
@@ -287,7 +217,6 @@
       const killThreshold = 0.90;
       if (marker >= killThreshold) {
         die();
-        return;
       }
     }
 
@@ -337,9 +266,11 @@
     }
 
     function die() {
+      if (state !== 'playing') return;
       state = 'dead';
       overlayTitle.textContent = 'Too Late';
-      overlayText.textContent = `Run over. Score: ${score}. Combo: ${combo}. Hit Start and go again.`;
+      overlayText.textContent = `Score ${score} • Combo ${combo} • Best ${best}`;
+      overlayBtn.textContent = 'Try Again';
       overlay.classList.remove('hidden');
       flash = 0.45;
     }
@@ -376,16 +307,16 @@
     }
 
     function drawHud() {
-      ctx.fillStyle = 'rgba(255,255,255,0.80)';
-      roundRect(18, 18, W - 36, 86, 22);
+      ctx.fillStyle = 'rgba(255,255,255,0.84)';
+      roundRect(18, 54, W - 36, 88, 24);
       ctx.fill();
 
       ctx.strokeStyle = 'rgba(148,163,184,0.18)';
       ctx.lineWidth = 1;
-      roundRect(18, 18, W - 36, 86, 22);
+      roundRect(18, 54, W - 36, 88, 24);
       ctx.stroke();
 
-      const cols = [34, 132, 232, 330];
+      const cols = [30, 128, 226, 322];
       const labels = ['SCORE', 'BEST', 'COMBO', 'SPEED'];
       const values = [String(score), String(best), String(combo), `${roundSpeed.toFixed(1)}x`];
 
@@ -393,20 +324,20 @@
       for (let i = 0; i < cols.length; i++) {
         ctx.fillStyle = '#64748b';
         ctx.font = '700 12px Inter, sans-serif';
-        ctx.fillText(labels[i], cols[i], 48);
+        ctx.fillText(labels[i], cols[i], 84);
         ctx.fillStyle = '#142033';
         ctx.font = '900 24px Inter, sans-serif';
-        ctx.fillText(values[i], cols[i], 80);
+        ctx.fillText(values[i], cols[i], 118);
       }
     }
 
     function drawTrack() {
       ctx.fillStyle = 'rgba(255,255,255,0.92)';
-      roundRect(TRACK_X - 16, TRACK_Y - 14, TRACK_W + 32, TRACK_H + 72, 28);
+      roundRect(TRACK_X - 16, TRACK_Y - 14, TRACK_W + 32, TRACK_H + 72, 30);
       ctx.fill();
       ctx.strokeStyle = 'rgba(59,130,246,0.10)';
       ctx.lineWidth = 1.2;
-      roundRect(TRACK_X - 16, TRACK_Y - 14, TRACK_W + 32, TRACK_H + 72, 28);
+      roundRect(TRACK_X - 16, TRACK_Y - 14, TRACK_W + 32, TRACK_H + 72, 30);
       ctx.stroke();
     }
 
@@ -457,9 +388,9 @@
       ctx.fillStyle = feedback.color;
       ctx.textAlign = 'center';
       ctx.font = '900 40px Inter, sans-serif';
-      ctx.fillText(feedback.text, W / 2, 136);
+      ctx.fillText(feedback.text, W / 2, 176);
       ctx.font = '800 22px Inter, sans-serif';
-      ctx.fillText(feedback.sub, W / 2, 164);
+      ctx.fillText(feedback.sub, W / 2, 204);
       ctx.globalAlpha = 1;
     }
 
@@ -491,7 +422,7 @@
     }
 
     function triggerTap() {
-      if (state === 'idle' || state === 'dead') return;
+      if (state !== 'playing') return;
       tapAction();
     }
 
@@ -512,7 +443,13 @@
       e.preventDefault();
     });
 
-    startBtn.addEventListener('click', resetGame);
+    overlayBtn.addEventListener('click', () => {
+      if (firstLaunch) {
+        firstLaunch = false;
+      }
+      resetGame();
+    });
+
     window.addEventListener('resize', () => {
       resizeGame();
       render();
