@@ -393,28 +393,20 @@
       const goodH = TRACK_H * 0.14;
       const perfectH = TRACK_H * 0.10;
 
-      const earlyW = TRACK_W;
-      const goodW = TRACK_W * 0.74;
-      const perfectW = TRACK_W * 0.56;
-      const deadW = TRACK_W * 0.40;
-
-      const centerX = W / 2;
-      const earlyX = centerX - earlyW / 2;
-      const goodX = centerX - goodW / 2;
-      const perfectX = centerX - perfectW / 2;
-      const deadX = centerX - deadW / 2;
+      const zoneW = TRACK_W;
+      const zoneX = TRACK_X;
 
       ctx.fillStyle = 'rgba(34,211,238,0.38)';
-      ctx.fillRect(earlyX, TRACK_Y, earlyW, earlyH);
+      ctx.fillRect(zoneX, TRACK_Y, zoneW, earlyH);
 
       ctx.fillStyle = 'rgba(52,211,153,0.52)';
-      ctx.fillRect(goodX, TRACK_Y + earlyH, goodW, goodH);
+      ctx.fillRect(zoneX, TRACK_Y + earlyH, zoneW, goodH);
 
       ctx.fillStyle = 'rgba(168,85,247,0.6)';
-      ctx.fillRect(perfectX, TRACK_Y + earlyH + goodH, perfectW, perfectH);
+      ctx.fillRect(zoneX, TRACK_Y + earlyH + goodH, zoneW, perfectH);
 
       ctx.fillStyle = 'rgba(251,113,133,0.9)';
-      ctx.fillRect(deadX, TRACK_Y + TRACK_H - 26, deadW, 26);
+      ctx.fillRect(zoneX, TRACK_Y + TRACK_H - 26, zoneW, 26);
 
       ctx.fillStyle = '#eef8ff';
       ctx.font = '700 12px Inter, sans-serif';
