@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Too Early</title>
+  <style>
+    :root {
+      --bg: #070d16;
+      --panel: rgba(8, 14, 24, 0.95);
+      --text: #f8fbff;
+      --muted: #9db2cd;
+      --cyan: #22d3ee;
+      --yellow: #fbbf24;
+      --green: #34d399;
+      --purple: #a855f7;
+      --danger: #fb7185;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      background:
+        radial-gradient(circle at top, rgba(168,85,247,0.12), transparent 34%),
+        radial-gradient(circle at bottom, rgba(251,113,133,0.12), transparent 36%),
+        linear-gradient(180deg, #0b1524 0%, #070d16 100%);
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    .app {
+      width: min(96vw, 720px);
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 30px;
+      padding: 20px;
+      box-shadow: 0 30px 90px rgba(0,0,0,.42);
+      backdrop-filter: blur(12px);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.1rem, 4vw, 3rem);
+      letter-spacing: -0.05em;
+      line-height: 0.95;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 1.02rem;
+      margin-bottom: 16px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .stat {
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 18px;
+      padding: 12px 14px;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 0.82rem;
+      margin-bottom: 6px;
+    }
+
+    .value {
+      font-size: 1.45rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+    }
+
+    .game-wrap {
+      position: relative;
+      border-radius: 28px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, #101a2b 0%, #08111b 100%);
+      padding: 28px;
+    }
+
+    canvas {
+      width: 100%;
+      height: min(52vh, 420px);
+      display: block;
+      touch-action: manipulation;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 24px;
+      background: linear-gradient(rgba(3,8,16,.16), rgba(3,8,16,.72));
+      pointer-events: none;
+    }
+
+    .overlay.hidden { display: none; }
+
+    .overlay-box {
+      max-width: 540px;
+      background: rgba(4, 9, 16, 0.86);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: 0 24px 60px rgba(0,0,0,.4);
+    }
+
+    .overlay h2 {
+      margin: 0 0 10px;
+      font-size: 2rem;
+    }
+
+    .overlay p {
+      margin: 8px 0;
+      color: #dce7f8;
+      line-height: 1.55;
+      font-size: 1.04rem;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    button {
+      appearance: none;
+      border: none;
+      border-radius: 18px;
+      padding: 16px 18px;
+      font-weight: 900;
+      font-size: 1rem;
+      cursor: pointer;
+      background: linear-gradient(135deg, #9333ea, #7c3aed);
+      color: white;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 12px 30px rgba(0,0,0,.25);
+    }
+
+    .footer-tip {
+      margin-top: 12px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.98rem;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 700px) {
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>TOO EARLY</h1>
+    <div class="subtitle">
+      Tap at the last possible moment. Early taps survive but score badly. Greedy late taps score big. Too late and the run ends.
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="label">Score</div><div class="value" id="score">0</div></div>
+      <div class="stat"><div class="label">Best</div><div class="value" id="best">0</div></div>
+      <div class="stat"><div class="label">Combo</div><div class="value" id="combo">0</div></div>
+      <div class="stat"><div class="label">Speed</div><div class="value" id="speed">1.0x</div></div>
+    </div>
+
+    <div class="game-wrap">
+      <canvas id="game" width="720" height="420"></canvas>
+      <div class="overlay" id="overlay">
+        <div class="overlay-box">
+          <h2 id="overlayTitle">Tap Start</h2>
+          <p id="overlayText">A marker moves toward the red zone. Tap before it dies. The later you tap, the more points you score.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="startBtn">Start / Restart</button>
+    </div>
+
+    <div class="footer-tip">
+      You are supposed to feel tempted to wait longer than you should.
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const overlay = document.getElementById('overlay');
+    const overlayTitle = document.getElementById('overlayTitle');
+    const overlayText = document.getElementById('overlayText');
+    const startBtn = document.getElementById('startBtn');
+    const scoreEl = document.getElementById('score');
+    const bestEl = document.getElementById('best');
+    const comboEl = document.getElementById('combo');
+    const speedEl = document.getElementById('speed');
+
+    const W = canvas.width;
+    const H = canvas.height;
+    const TRACK_X = 90;
+    const TRACK_W = W - 180;
+    const TRACK_Y = H / 2 - 22;
+    const TRACK_H = 44;
+
+    let state = 'idle';
+    let raf = null;
+    let lastTime = 0;
+
+    let score = 0;
+    let best = Number(localStorage.getItem('too-early-best') || 0);
+    let combo = 0;
+    let roundSpeed = 0.55;
+    let marker = 0;
+    let roundDirection = 1;
+    let pulse = 0;
+    let feedback = null;
+    let roundIndex = 0;
+
+    bestEl.textContent = best;
+
+    function resetGame() {
+      score = 0;
+      combo = 0;
+      roundSpeed = 0.55;
+      roundIndex = 0;
+      feedback = null;
+      startRound(true);
+      state = 'playing';
+      overlay.classList.add('hidden');
+      updateHud();
+      lastTime = 0;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(loop);
+    }
+
+    function startRound(isFirst = false) {
+      roundIndex += 1;
+      marker = 0;
+      roundDirection = Math.random() < 0.5 ? 1 : -1;
+      if (isFirst) roundDirection = 1;
+      feedback = null;
+    }
+
+    function loop(ts) {
+      if (!lastTime) lastTime = ts;
+      const dt = Math.min(0.033, (ts - lastTime) / 1000);
+      lastTime = ts;
+      if (state === 'playing') update(dt);
+      render();
+      raf = requestAnimationFrame(loop);
+    }
+
+    function update(dt) {
+      pulse += dt * 8;
+      marker += dt * roundSpeed;
+
+      if (feedback) {
+        feedback.life -= dt;
+        if (feedback.life <= 0) feedback = null;
+      }
+
+      if (marker >= 1) {
+        die();
+        return;
+      }
+
+      updateHud();
+    }
+
+    function tapAction() {
+      if (state !== 'playing') return;
+
+      const safeEnd = 0.76;
+      const goodStart = 0.76;
+      const perfectStart = 0.9;
+      const deathStart = 1.0;
+
+      if (marker < goodStart) {
+        const gain = Math.round(8 + combo * 0.5);
+        score += gain;
+        combo = Math.max(0, combo);
+        feedback = { text: 'EARLY', sub: `+${gain}`, color: '#22d3ee', life: 0.7 };
+      } else if (marker < perfectStart) {
+        combo += 1;
+        const gain = Math.round((20 + combo * 3) * (1 + roundSpeed));
+        score += gain;
+        feedback = { text: 'GOOD', sub: `+${gain}`, color: '#34d399', life: 0.7 };
+      } else if (marker < deathStart) {
+        combo += 2;
+        const gain = Math.round((45 + combo * 5) * (1 + roundSpeed));
+        score += gain;
+        feedback = { text: 'PERFECT', sub: `+${gain}`, color: '#a855f7', life: 0.8 };
+      }
+
+      roundSpeed += 0.045;
+      if (score > best) {
+        best = score;
+        localStorage.setItem('too-early-best', String(best));
+      }
+      startRound();
+    }
+
+    function die() {
+      state = 'dead';
+      overlayTitle.textContent = 'Too Late';
+      overlayText.textContent = `Run over. Score: ${score}. Combo: ${combo}. Hit Start and try to wait longer.`;
+      overlay.classList.remove('hidden');
+      updateHud();
+    }
+
+    function updateHud() {
+      scoreEl.textContent = score;
+      bestEl.textContent = best;
+      comboEl.textContent = combo;
+      speedEl.textContent = `${roundSpeed.toFixed(1)}x`;
+    }
+
+    function render() {
+      ctx.clearRect(0, 0, W, H);
+      drawBackground();
+      drawTrack();
+      drawZones();
+      drawMarker();
+      drawFeedback();
+    }
+
+    function drawBackground() {
+      const grad = ctx.createLinearGradient(0, 0, 0, H);
+      grad.addColorStop(0, '#13263e');
+      grad.addColorStop(0.55, '#0c1827');
+      grad.addColorStop(1, '#07101a');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    function drawTrack() {
+      ctx.fillStyle = 'rgba(255,255,255,0.08)';
+      roundRect(TRACK_X, TRACK_Y, TRACK_W, TRACK_H, 22);
+      ctx.fill();
+    }
+
+    function drawZones() {
+      const earlyW = TRACK_W * 0.76;
+      const goodW = TRACK_W * 0.14;
+      const perfectW = TRACK_W * 0.10;
+
+      ctx.fillStyle = 'rgba(34,211,238,0.35)';
+      roundRect(TRACK_X, TRACK_Y, earlyW, TRACK_H, 22);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(52,211,153,0.45)';
+      roundRect(TRACK_X + earlyW, TRACK_Y, goodW, TRACK_H, 0);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(168,85,247,0.5)';
+      roundRect(TRACK_X + earlyW + goodW, TRACK_Y, perfectW, TRACK_H, 22);
+      ctx.fill();
+
+      ctx.fillStyle = 'rgba(251,113,133,0.7)';
+      roundRect(TRACK_X + TRACK_W - 14, TRACK_Y - 10, 14, TRACK_H + 20, 8);
+      ctx.fill();
+
+      ctx.fillStyle = '#dfe9f8';
+      ctx.font = '700 14px Inter, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('EARLY', TRACK_X + 18, TRACK_Y - 16);
+      ctx.fillText('GOOD', TRACK_X + earlyW + 18, TRACK_Y - 16);
+      ctx.fillText('PERFECT', TRACK_X + earlyW + goodW + 10, TRACK_Y - 16);
+      ctx.fillText('DEAD', TRACK_X + TRACK_W - 52, TRACK_Y - 16);
+    }
+
+    function drawMarker() {
+      const x = TRACK_X + TRACK_W * marker;
+      const y = H / 2;
+      const scale = 1 + Math.sin(pulse) * 0.04;
+
+      ctx.fillStyle = '#f8fbff';
+      ctx.shadowColor = 'rgba(255,255,255,0.65)';
+      ctx.shadowBlur = 24;
+      ctx.beginPath();
+      ctx.arc(x, y, 16 * scale, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    function drawFeedback() {
+      if (!feedback) return;
+      ctx.globalAlpha = Math.max(0, feedback.life);
+      ctx.fillStyle = feedback.color;
+      ctx.textAlign = 'center';
+      ctx.font = '900 38px Inter, sans-serif';
+      ctx.fillText(feedback.text, W / 2, 112);
+      ctx.font = '800 24px Inter, sans-serif';
+      ctx.fillText(feedback.sub, W / 2, 148);
+      ctx.globalAlpha = 1;
+    }
+
+    function roundRect(x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+
+    function triggerTap() {
+      if (state === 'idle' || state === 'dead') return;
+      tapAction();
+    }
+
+    canvas.addEventListener('pointerdown', triggerTap);
+    startBtn.addEventListener('click', resetGame);
+
+    updateHud();
+    render();
+  </script>
+</body>
+</html>
