@@ -208,10 +208,6 @@
     const overlayTitle = document.getElementById('overlayTitle');
     const overlayText = document.getElementById('overlayText');
     const startBtn = document.getElementById('startBtn');
-    const scoreEl = document.getElementById('score');
-    const bestEl = document.getElementById('best');
-    const comboEl = document.getElementById('combo');
-    const speedEl = document.getElementById('speed');
 
     const W = canvas.width;
     const H = canvas.height;
@@ -234,7 +230,6 @@
     let roundIndex = 0;
     let scorePopups = [];
 
-    bestEl.textContent = best;
 
     function resetGame() {
       score = 0;
@@ -331,12 +326,7 @@
       updateHud();
     }
 
-    function updateHud() {
-      scoreEl.textContent = score;
-      bestEl.textContent = best;
-      comboEl.textContent = combo;
-      speedEl.textContent = `${roundSpeed.toFixed(1)}x`;
-    }
+    function updateHud() {}
 
     function render() {
       ctx.clearRect(0, 0, W, H);
