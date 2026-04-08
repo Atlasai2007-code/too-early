@@ -309,8 +309,8 @@
     function tapAction() {
       if (state !== 'playing') return;
 
-      const goodStart = 0.76;
-      const perfectStart = 0.9;
+      const goodStart = 0.68;
+      const perfectStart = 0.86;
 
       if (marker < goodStart) {
         const gain = Math.round(8 + combo * 0.5);
@@ -328,7 +328,7 @@
         feedback = { text: 'PERFECT', sub: `+${gain}`, color: '#a855f7', life: 0.8 };
       }
 
-      roundSpeed += 0.045;
+      roundSpeed = Math.min(1.15, roundSpeed + 0.025);
       if (score > best) {
         best = score;
         localStorage.setItem('too-early-best', String(best));
@@ -339,7 +339,7 @@
     function die() {
       state = 'dead';
       overlayTitle.textContent = 'Too Late';
-      overlayText.textContent = `Run over. Score: ${score}. Combo: ${combo}. Hit Start and try to wait longer.`;
+      overlayText.textContent = `Run over. Score: ${score}. Combo: ${combo}. Hit Start and try again — it should stay fair.`;
       overlay.classList.remove('hidden');
       updateHud();
     }
@@ -385,11 +385,11 @@
     function drawTrack() {}
 
     function drawZones() {
-      const earlyH = TRACK_H * 0.72;
-      const goodH = TRACK_H * 0.14;
-      const perfectH = TRACK_H * 0.08;
-      const deadH = 34;
-      const deadGap = 14;
+      const earlyH = TRACK_H * 0.64;
+      const goodH = TRACK_H * 0.16;
+      const perfectH = TRACK_H * 0.10;
+      const deadH = 26;
+      const deadGap = 18;
 
       const zoneW = TRACK_W;
       const zoneX = TRACK_X;
@@ -404,15 +404,15 @@
       ctx.fillRect(zoneX, TRACK_Y + earlyH + goodH, zoneW, perfectH);
 
       ctx.fillStyle = 'rgba(251,113,133,0.9)';
-      ctx.fillRect(zoneX, TRACK_Y + TRACK_H - deadH, zoneW, deadH);
+      ctx.fillRect(zoneX, TRACK_Y + TRACK_H + deadGap, zoneW, deadH);
 
       ctx.fillStyle = '#eef8ff';
       ctx.font = '700 12px Inter, sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText('EARLY', W / 2, TRACK_Y - 14);
       ctx.fillText('GOOD', W / 2, TRACK_Y + earlyH + goodH / 2 + 5);
-      ctx.fillText('PERFECT', W / 2, TRACK_Y + earlyH + goodH + perfectH / 2);
-      ctx.fillText('DEAD', W / 2, TRACK_Y + TRACK_H + deadGap + 16);
+      ctx.fillText('PERFECT', W / 2, TRACK_Y + earlyH + goodH + perfectH / 2 + 2);
+      ctx.fillText('DEAD', W / 2, TRACK_Y + TRACK_H + deadGap + deadH + 18);
     }
 
     function drawMarker() {
