@@ -60,9 +60,9 @@
 
     .app {
       height: 100%;
-      padding: 18px 14px 10px;
+      padding: 12px 10px 8px;
       display: grid;
-      grid-template-rows: auto auto 1fr auto auto;
+      grid-template-rows: auto 1fr auto;
       gap: 10px;
     }
 
@@ -79,23 +79,9 @@
       font-size: 0.96rem;
     }
 
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 8px;
-      background: rgba(255,255,255,0.035);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 18px;
-      padding: 8px;
-    }
+    .stats { display: none; }
 
-    .stat {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 14px;
-      padding: 10px 8px;
-      text-align: center;
-    }
+    .stat { display: none; }
 
     .label {
       color: var(--muted);
@@ -116,7 +102,7 @@
       border: 1px solid rgba(255,255,255,0.08);
       background: linear-gradient(180deg, #111c2f 0%, #08111b 100%);
       min-height: 0;
-      min-height: 420px;
+      min-height: 560px;
     }
 
     canvas {
@@ -197,13 +183,6 @@
         <h1>TOO EARLY</h1>
       </div>
 
-      <div class="stats">
-        <div class="stat"><div class="label">Score</div><div class="value" id="score">0</div></div>
-        <div class="stat"><div class="label">Best</div><div class="value" id="best">0</div></div>
-        <div class="stat"><div class="label">Combo</div><div class="value" id="combo">0</div></div>
-        <div class="stat"><div class="label">Speed</div><div class="value" id="speed">1.0x</div></div>
-      </div>
-
       <div class="game-wrap">
         <canvas id="game" width="430" height="520"></canvas>
         <div class="overlay" id="overlay">
@@ -237,9 +216,9 @@
     const W = canvas.width;
     const H = canvas.height;
     const TRACK_W = 92;
-    const TRACK_H = H - 180;
+    const TRACK_H = H - 150;
     const TRACK_X = W / 2 - TRACK_W / 2;
-    const TRACK_Y = 100;
+    const TRACK_Y = 90;
 
     let state = 'idle';
     let raf = null;
@@ -253,6 +232,7 @@
     let pulse = 0;
     let feedback = null;
     let roundIndex = 0;
+    let scorePopups = [];
 
     bestEl.textContent = best;
 
@@ -262,6 +242,7 @@
       roundSpeed = 0.55;
       roundIndex = 0;
       feedback = null;
+      scorePopups = [];
       startRound();
       state = 'playing';
       overlay.classList.add('hidden');
@@ -295,6 +276,10 @@
         if (feedback.life <= 0) feedback = null;
       }
 
+      scorePopups = scorePopups
+        .map((p) => ({ ...p, y: p.y - 42 * dt, life: p.life - dt }))
+        .filter((p) => p.life > 0);
+
       const killThreshold = 0.90;
       if (marker >= killThreshold) {
         die();
@@ -315,18 +300,21 @@
         score += gain;
         roundSpeed += 0.07;
         feedback = { text: 'EARLY', sub: `+${gain} • SPEED UP`, color: '#60a5fa', life: 0.7 };
+        scorePopups.push({ text: `+${gain}`, x: W / 2 + 90, y: TRACK_Y + TRACK_H * marker, life: 0.9, color: '#60a5fa' });
       } else if (marker < perfectStart) {
         combo += 1;
         const gain = Math.round((20 + combo * 3) * (1 + roundSpeed));
         score += gain;
         roundSpeed += 0.03;
         feedback = { text: 'GOOD', sub: `+${gain} • STEADY`, color: '#22c55e', life: 0.7 };
+        scorePopups.push({ text: `+${gain}`, x: W / 2 + 90, y: TRACK_Y + TRACK_H * marker, life: 0.9, color: '#22c55e' });
       } else {
         combo += 2;
         const gain = Math.round((45 + combo * 5) * (1 + roundSpeed));
         score += gain;
         roundSpeed += 0.008;
         feedback = { text: 'PERFECT', sub: `+${gain} • CONTROLLED`, color: '#8b5cf6', life: 0.8 };
+        scorePopups.push({ text: `+${gain}`, x: W / 2 + 90, y: TRACK_Y + TRACK_H * marker, life: 1.0, color: '#8b5cf6' });
       }
       if (score > best) {
         best = score;
@@ -357,7 +345,9 @@
       drawTrack();
       drawZones();
       drawMarker();
+      drawInGameHud();
       drawFeedback();
+      drawScorePopups();
     }
 
     function drawBackground() {
@@ -380,6 +370,26 @@
     }
 
     function drawHeaderHint() {}
+
+    function drawInGameHud() {
+      ctx.fillStyle = 'rgba(255,255,255,0.78)';
+      roundRect(16, 14, W - 32, 62, 18);
+      ctx.fill();
+
+      ctx.fillStyle = '#18212f';
+      ctx.textAlign = 'left';
+      ctx.font = '700 12px Inter, sans-serif';
+      ctx.fillText('SCORE', 28, 34);
+      ctx.fillText('BEST', 132, 34);
+      ctx.fillText('COMBO', 228, 34);
+      ctx.fillText('SPEED', 330, 34);
+
+      ctx.font = '900 22px Inter, sans-serif';
+      ctx.fillText(String(score), 28, 60);
+      ctx.fillText(String(best), 132, 60);
+      ctx.fillText(String(combo), 228, 60);
+      ctx.fillText(`${roundSpeed.toFixed(1)}x`, 330, 60);
+    }
 
     function drawTrack() {}
 
@@ -439,6 +449,17 @@
       ctx.fillText(feedback.text, W / 2, TRACK_Y + TRACK_H / 2 - 10);
       ctx.font = '800 24px Inter, sans-serif';
       ctx.fillText(feedback.sub, W / 2, TRACK_Y + TRACK_H / 2 + 24);
+      ctx.globalAlpha = 1;
+    }
+
+    function drawScorePopups() {
+      ctx.textAlign = 'left';
+      ctx.font = '900 22px Inter, sans-serif';
+      for (const p of scorePopups) {
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.fillStyle = p.color;
+        ctx.fillText(p.text, p.x, p.y);
+      }
       ctx.globalAlpha = 1;
     }
 
