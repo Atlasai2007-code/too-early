@@ -179,7 +179,7 @@
       </div>
 
       <div class="game-wrap">
-        <canvas id="game" width="430" height="720"></canvas>
+        <canvas id="game"></canvas>
         <div class="overlay" id="overlay">
           <div class="overlay-box">
             <h2 id="overlayTitle">Tap Start</h2>
@@ -202,12 +202,12 @@
     const overlayText = document.getElementById('overlayText');
     const startBtn = document.getElementById('startBtn');
 
-    const W = canvas.width;
-    const H = canvas.height;
-    const TRACK_W = 112;
-    const TRACK_H = H - 220;
-    const TRACK_X = W / 2 - TRACK_W / 2;
-    const TRACK_Y = 145;
+    let W = 0;
+    let H = 0;
+    let TRACK_W = 0;
+    let TRACK_H = 0;
+    let TRACK_X = 0;
+    let TRACK_Y = 0;
 
     let state = 'idle';
     let raf = null;
@@ -224,7 +224,22 @@
     let scorePopups = [];
     let flash = 0;
 
+    function resizeGame() {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      W = rect.width;
+      H = rect.height;
+      TRACK_W = Math.max(96, Math.min(118, W * 0.24));
+      TRACK_H = H - 210;
+      TRACK_X = W / 2 - TRACK_W / 2;
+      TRACK_Y = 138;
+    }
+
     function resetGame() {
+      resizeGame();
       score = 0;
       combo = 0;
       roundSpeed = 0.55;
@@ -386,12 +401,12 @@
     }
 
     function drawTrack() {
-      ctx.fillStyle = 'rgba(255,255,255,0.86)';
-      roundRect(TRACK_X - 18, TRACK_Y - 16, TRACK_W + 36, TRACK_H + 84, 30);
+      ctx.fillStyle = 'rgba(255,255,255,0.92)';
+      roundRect(TRACK_X - 16, TRACK_Y - 14, TRACK_W + 32, TRACK_H + 72, 28);
       ctx.fill();
-      ctx.strokeStyle = 'rgba(59,130,246,0.12)';
-      ctx.lineWidth = 1.5;
-      roundRect(TRACK_X - 18, TRACK_Y - 16, TRACK_W + 36, TRACK_H + 84, 30);
+      ctx.strokeStyle = 'rgba(59,130,246,0.10)';
+      ctx.lineWidth = 1.2;
+      roundRect(TRACK_X - 16, TRACK_Y - 14, TRACK_W + 32, TRACK_H + 72, 28);
       ctx.stroke();
     }
 
@@ -498,7 +513,12 @@
     });
 
     startBtn.addEventListener('click', resetGame);
+    window.addEventListener('resize', () => {
+      resizeGame();
+      render();
+    });
 
+    resizeGame();
     render();
   </script>
 </body>
