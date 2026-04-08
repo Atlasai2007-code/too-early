@@ -234,10 +234,10 @@
 
     const W = canvas.width;
     const H = canvas.height;
-    const TRACK_X = 34;
-    const TRACK_W = W - 68;
-    const TRACK_Y = H / 2 - 26;
-    const TRACK_H = 52;
+    const TRACK_W = 92;
+    const TRACK_H = H - 180;
+    const TRACK_X = W / 2 - TRACK_W / 2;
+    const TRACK_Y = 100;
 
     let state = 'idle';
     let raf = null;
@@ -377,60 +377,61 @@
 
     function drawHeaderHint() {
       ctx.fillStyle = 'rgba(4, 12, 20, 0.72)';
-      roundRect(16, 16, W - 32, 56, 18);
+      roundRect(16, 16, W - 32, 64, 18);
       ctx.fill();
       ctx.fillStyle = '#d6eaff';
       ctx.textAlign = 'center';
       ctx.font = '700 16px Inter, sans-serif';
-      ctx.fillText('Tap before red. Later = more points.', W / 2, 51);
+      ctx.fillText('Tap before the marker reaches the bottom red zone.', W / 2, 44);
+      ctx.fillText('Later = more points', W / 2, 66);
     }
 
     function drawTrack() {
       ctx.fillStyle = 'rgba(255,255,255,0.08)';
-      roundRect(TRACK_X, TRACK_Y, TRACK_W, TRACK_H, 26);
+      roundRect(TRACK_X, TRACK_Y, TRACK_W, TRACK_H, 34);
       ctx.fill();
     }
 
     function drawZones() {
-      const earlyW = TRACK_W * 0.76;
-      const goodW = TRACK_W * 0.14;
-      const perfectW = TRACK_W * 0.10;
+      const earlyH = TRACK_H * 0.76;
+      const goodH = TRACK_H * 0.14;
+      const perfectH = TRACK_H * 0.10;
 
       ctx.fillStyle = 'rgba(34,211,238,0.38)';
-      roundRect(TRACK_X, TRACK_Y, earlyW, TRACK_H, 26);
+      roundRect(TRACK_X, TRACK_Y, TRACK_W, earlyH, 34);
       ctx.fill();
 
       ctx.fillStyle = 'rgba(52,211,153,0.48)';
-      roundRect(TRACK_X + earlyW, TRACK_Y, goodW, TRACK_H, 0);
+      roundRect(TRACK_X, TRACK_Y + earlyH, TRACK_W, goodH, 0);
       ctx.fill();
 
       ctx.fillStyle = 'rgba(168,85,247,0.55)';
-      roundRect(TRACK_X + earlyW + goodW, TRACK_Y, perfectW, TRACK_H, 26);
+      roundRect(TRACK_X, TRACK_Y + earlyH + goodH, TRACK_W, perfectH, 34);
       ctx.fill();
 
-      ctx.fillStyle = 'rgba(251,113,133,0.8)';
-      roundRect(TRACK_X + TRACK_W - 18, TRACK_Y - 10, 18, TRACK_H + 20, 10);
+      ctx.fillStyle = 'rgba(251,113,133,0.82)';
+      roundRect(TRACK_X - 10, TRACK_Y + TRACK_H - 22, TRACK_W + 20, 28, 12);
       ctx.fill();
 
       ctx.fillStyle = '#eef8ff';
       ctx.font = '700 12px Inter, sans-serif';
-      ctx.textAlign = 'left';
-      ctx.fillText('EARLY', TRACK_X + 14, TRACK_Y - 14);
-      ctx.fillText('GOOD', TRACK_X + earlyW + 12, TRACK_Y - 14);
-      ctx.fillText('PERFECT', TRACK_X + earlyW + goodW + 8, TRACK_Y - 14);
-      ctx.fillText('DEAD', TRACK_X + TRACK_W - 46, TRACK_Y - 14);
+      ctx.textAlign = 'center';
+      ctx.fillText('EARLY', W / 2, TRACK_Y - 14);
+      ctx.fillText('GOOD', W / 2, TRACK_Y + earlyH + 22);
+      ctx.fillText('PERFECT', W / 2, TRACK_Y + earlyH + goodH + 22);
+      ctx.fillText('DEAD', W / 2, TRACK_Y + TRACK_H + 28);
     }
 
     function drawMarker() {
-      const x = TRACK_X + TRACK_W * marker;
-      const y = H / 2;
+      const x = W / 2;
+      const y = TRACK_Y + TRACK_H * marker;
       const scale = 1 + Math.sin(pulse) * 0.05;
 
       ctx.fillStyle = '#f8fbff';
       ctx.shadowColor = 'rgba(255,255,255,0.72)';
       ctx.shadowBlur = 26;
       ctx.beginPath();
-      ctx.arc(x, y, 18 * scale, 0, Math.PI * 2);
+      ctx.arc(x, y, 20 * scale, 0, Math.PI * 2);
       ctx.fill();
       ctx.shadowBlur = 0;
     }
@@ -440,10 +441,10 @@
       ctx.globalAlpha = Math.max(0, feedback.life);
       ctx.fillStyle = feedback.color;
       ctx.textAlign = 'center';
-      ctx.font = '900 34px Inter, sans-serif';
-      ctx.fillText(feedback.text, W / 2, 120);
-      ctx.font = '800 22px Inter, sans-serif';
-      ctx.fillText(feedback.sub, W / 2, 152);
+      ctx.font = '900 36px Inter, sans-serif';
+      ctx.fillText(feedback.text, W / 2, TRACK_Y + TRACK_H / 2 - 10);
+      ctx.font = '800 24px Inter, sans-serif';
+      ctx.fillText(feedback.sub, W / 2, TRACK_Y + TRACK_H / 2 + 24);
       ctx.globalAlpha = 1;
     }
 
