@@ -405,20 +405,16 @@
       const deadX = centerX - deadW / 2;
 
       ctx.fillStyle = 'rgba(34,211,238,0.38)';
-      roundRect(earlyX, TRACK_Y, earlyW, earlyH, 34);
-      ctx.fill();
+      ctx.fillRect(earlyX, TRACK_Y, earlyW, earlyH);
 
       ctx.fillStyle = 'rgba(52,211,153,0.52)';
-      roundRect(goodX, TRACK_Y + earlyH, goodW, goodH, 34);
-      ctx.fill();
+      ctx.fillRect(goodX, TRACK_Y + earlyH, goodW, goodH);
 
       ctx.fillStyle = 'rgba(168,85,247,0.6)';
-      roundRect(perfectX, TRACK_Y + earlyH + goodH, perfectW, perfectH, 34);
-      ctx.fill();
+      ctx.fillRect(perfectX, TRACK_Y + earlyH + goodH, perfectW, perfectH);
 
       ctx.fillStyle = 'rgba(251,113,133,0.9)';
-      roundRect(deadX, TRACK_Y + TRACK_H - 26, deadW, 26, 34);
-      ctx.fill();
+      ctx.fillRect(deadX, TRACK_Y + TRACK_H - 26, deadW, 26);
 
       ctx.fillStyle = '#eef8ff';
       ctx.font = '700 12px Inter, sans-serif';
