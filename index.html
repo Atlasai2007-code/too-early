@@ -295,7 +295,8 @@
         if (feedback.life <= 0) feedback = null;
       }
 
-      if (marker >= 1) {
+      const killThreshold = 0.90;
+      if (marker >= killThreshold) {
         die();
         return;
       }
@@ -386,7 +387,7 @@
       const earlyH = TRACK_H * 0.64;
       const goodH = TRACK_H * 0.16;
       const perfectH = TRACK_H * 0.10;
-      const deadH = 26;
+      const deadH = 4;
       const deadGap = 0;
       const perfectBottom = TRACK_Y + earlyH + goodH + perfectH;
 
@@ -411,7 +412,7 @@
       ctx.fillText('EARLY', W / 2, TRACK_Y - 14);
       ctx.fillText('GOOD', W / 2, TRACK_Y + earlyH + goodH / 2 + 5);
       ctx.fillText('PERFECT', W / 2, TRACK_Y + earlyH + goodH + perfectH / 2 + 2);
-      ctx.fillText('DEAD', W / 2, perfectBottom + deadH + 16);
+      ctx.fillText('DEAD', W / 2, perfectBottom + deadH + 18);
     }
 
     function drawMarker() {
