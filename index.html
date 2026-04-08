@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Too Early</title>
   <style>
     :root {
@@ -19,12 +19,17 @@
 
     * { box-sizing: border-box; }
 
+    html, body {
+      overscroll-behavior: none;
+      touch-action: manipulation;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
       display: grid;
       place-items: center;
-      padding: 12px;
+      padding: 4px;
       background:
         radial-gradient(circle at top, rgba(168,85,247,0.12), transparent 34%),
         radial-gradient(circle at bottom, rgba(251,113,133,0.12), transparent 36%),
@@ -34,8 +39,8 @@
     }
 
     .phone {
-      width: min(100%, 430px);
-      height: min(96vh, 932px);
+      width: min(100vw, 460px);
+      height: min(100vh, 980px);
       background: linear-gradient(180deg, rgba(13,20,33,0.98), rgba(7,12,21,0.98));
       border: 1px solid rgba(255,255,255,0.08);
       border-radius: 34px;
@@ -58,7 +63,7 @@
 
     .app {
       height: 100%;
-      padding: 22px 18px 18px;
+      padding: 18px 14px 12px;
       display: grid;
       grid-template-rows: auto auto 1fr auto auto;
       gap: 14px;
@@ -457,7 +462,23 @@
       tapAction();
     }
 
-    canvas.addEventListener('pointerdown', triggerTap);
+    canvas.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      triggerTap();
+    });
+    canvas.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+    }, { passive: false });
+    canvas.addEventListener('gesturestart', (e) => {
+      e.preventDefault();
+    });
+    canvas.addEventListener('gesturechange', (e) => {
+      e.preventDefault();
+    });
+    canvas.addEventListener('gestureend', (e) => {
+      e.preventDefault();
+    });
+
     startBtn.addEventListener('click', resetGame);
 
     updateHud();
