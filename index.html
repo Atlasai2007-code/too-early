@@ -6,15 +6,23 @@
   <title>Too Early</title>
   <style>
     :root {
-      --bg: #eef4ff;
-      --panel: rgba(255, 255, 255, 0.9);
-      --text: #18212f;
+      --bg-top: #d8e8ff;
+      --bg-bottom: #edf5ff;
+      --shell-top: rgba(255,255,255,0.96);
+      --shell-bottom: rgba(242,247,255,0.97);
+      --panel: rgba(255,255,255,0.76);
+      --panel-border: rgba(148,163,184,0.18);
+      --text: #142033;
       --muted: #64748b;
-      --early: #93c5fd;
-      --good: #86efac;
-      --perfect: #c4b5fd;
-      --danger: #fca5a5;
+      --track-bg: #f4f8ff;
+      --track-outline: rgba(59,130,246,0.16);
+      --early: #9fc5ff;
+      --good: #91f0b0;
+      --perfect: #ccb7ff;
+      --danger: #ff9ca8;
       --line: #ffffff;
+      --button-top: #5aa2ff;
+      --button-bottom: #3f82f8;
     }
 
     * { box-sizing: border-box; }
@@ -29,8 +37,8 @@
       min-height: 100vh;
       display: grid;
       place-items: center;
-      padding: 4px;
-      background: linear-gradient(180deg, #dbeafe 0%, #eef4ff 100%);
+      padding: 0;
+      background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
       color: var(--text);
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     }
@@ -38,10 +46,12 @@
     .phone {
       width: min(100vw, 460px);
       height: min(100dvh, 980px);
-      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(241,245,249,0.96));
-      border: 1px solid rgba(148,163,184,0.25);
-      border-radius: 34px;
-      box-shadow: 0 40px 100px rgba(0,0,0,.45);
+      background: linear-gradient(180deg, var(--shell-top), var(--shell-bottom));
+      border: 1px solid rgba(255,255,255,0.7);
+      border-radius: 36px;
+      box-shadow:
+        0 40px 100px rgba(55, 84, 170, 0.18),
+        inset 0 1px 0 rgba(255,255,255,0.7);
       overflow: hidden;
       position: relative;
     }
@@ -51,64 +61,51 @@
       top: 10px;
       left: 50%;
       transform: translateX(-50%);
-      width: 140px;
-      height: 26px;
-      background: rgba(0,0,0,0.55);
+      width: 150px;
+      height: 28px;
+      background: rgba(15,20,30,0.6);
       border-radius: 0 0 18px 18px;
       z-index: 3;
+      backdrop-filter: blur(8px);
     }
 
     .app {
       height: 100%;
-      padding: 12px 10px 8px;
+      padding: 16px 14px 14px;
       display: grid;
       grid-template-rows: auto 1fr auto;
-      gap: 10px;
+      gap: 12px;
+    }
+
+    .topbar {
+      padding-top: 16px;
     }
 
     h1 {
-      margin: 18px 0 0;
-      font-size: 2rem;
-      letter-spacing: -0.05em;
+      margin: 16px 0 0;
+      font-size: 2.05rem;
       line-height: 0.95;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      line-height: 1.45;
-      font-size: 0.96rem;
-    }
-
-    .stats { display: none; }
-
-    .stat { display: none; }
-
-    .label {
-      color: var(--muted);
-      font-size: 0.72rem;
-      margin-bottom: 4px;
-    }
-
-    .value {
-      font-size: 1.05rem;
-      font-weight: 900;
-      letter-spacing: -0.03em;
+      letter-spacing: -0.06em;
+      font-weight: 950;
+      color: #111c2e;
     }
 
     .game-wrap {
       position: relative;
-      border-radius: 28px;
+      border-radius: 30px;
       overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: linear-gradient(180deg, #111c2f 0%, #08111b 100%);
       min-height: 0;
       height: 100%;
+      background: linear-gradient(180deg, #edf4ff 0%, #f8fbff 100%);
+      border: 1px solid rgba(148,163,184,0.16);
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.85),
+        0 10px 30px rgba(148,163,184,0.14);
     }
 
     canvas {
       width: 100%;
       height: 100%;
-      min-height: 100%;
       display: block;
       touch-action: manipulation;
     }
@@ -119,9 +116,10 @@
       display: grid;
       place-items: center;
       text-align: center;
-      padding: 18px;
-      background: linear-gradient(rgba(3,8,16,.12), rgba(3,8,16,.74));
+      padding: 20px;
+      background: linear-gradient(rgba(248,251,255,0.15), rgba(237,244,255,0.74));
       pointer-events: none;
+      backdrop-filter: blur(6px);
     }
 
     .overlay.hidden { display: none; }
@@ -129,21 +127,23 @@
     .overlay-box {
       width: 100%;
       max-width: 320px;
-      background: rgba(4, 9, 16, 0.88);
-      border: 1px solid rgba(255,255,255,0.08);
+      background: rgba(255,255,255,0.84);
+      border: 1px solid rgba(148,163,184,0.18);
       border-radius: 24px;
       padding: 20px;
-      box-shadow: 0 24px 60px rgba(0,0,0,.4);
+      box-shadow: 0 24px 60px rgba(94, 122, 177, 0.18);
     }
 
     .overlay h2 {
       margin: 0 0 8px;
-      font-size: 1.65rem;
+      font-size: 1.6rem;
+      letter-spacing: -0.04em;
+      color: #101b2d;
     }
 
     .overlay p {
       margin: 0;
-      color: #dce7f8;
+      color: #51627d;
       line-height: 1.5;
       font-size: 0.98rem;
     }
@@ -151,28 +151,22 @@
     .controls {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 8px;
+      gap: 10px;
     }
 
     button {
       appearance: none;
       border: none;
-      border-radius: 18px;
-      padding: 16px 18px;
+      border-radius: 20px;
+      padding: 17px 18px;
       font-weight: 900;
-      font-size: 1rem;
+      font-size: 1.05rem;
       cursor: pointer;
-      background: linear-gradient(135deg, #60a5fa, #3b82f6);
+      background: linear-gradient(180deg, var(--button-top), var(--button-bottom));
       color: white;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 12px 30px rgba(0,0,0,.25);
-    }
-
-    .footer-tip {
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.8rem;
-      line-height: 1.25;
-      padding-bottom: 0;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.25),
+        0 14px 30px rgba(63,130,248,0.26);
     }
   </style>
 </head>
@@ -180,16 +174,16 @@
   <div class="phone">
     <div class="notch"></div>
     <div class="app">
-      <div>
+      <div class="topbar">
         <h1>TOO EARLY</h1>
       </div>
 
       <div class="game-wrap">
-        <canvas id="game" width="430" height="520"></canvas>
+        <canvas id="game" width="430" height="720"></canvas>
         <div class="overlay" id="overlay">
           <div class="overlay-box">
             <h2 id="overlayTitle">Tap Start</h2>
-            <p id="overlayText">Tap before the marker hits red. The later you tap, the more points you score.</p>
+            <p id="overlayText">Tap before the line reaches DEAD. Later taps score more. Perfect taps keep the speed under control.</p>
           </div>
         </div>
       </div>
@@ -197,7 +191,6 @@
       <div class="controls">
         <button id="startBtn">Start / Restart</button>
       </div>
-
     </div>
   </div>
 
@@ -211,10 +204,10 @@
 
     const W = canvas.width;
     const H = canvas.height;
-    const TRACK_W = 92;
-    const TRACK_H = H - 150;
+    const TRACK_W = 112;
+    const TRACK_H = H - 220;
     const TRACK_X = W / 2 - TRACK_W / 2;
-    const TRACK_Y = 90;
+    const TRACK_Y = 145;
 
     let state = 'idle';
     let raf = null;
@@ -229,7 +222,7 @@
     let feedback = null;
     let roundIndex = 0;
     let scorePopups = [];
-
+    let flash = 0;
 
     function resetGame() {
       score = 0;
@@ -238,10 +231,10 @@
       roundIndex = 0;
       feedback = null;
       scorePopups = [];
+      flash = 0;
       startRound();
       state = 'playing';
       overlay.classList.add('hidden');
-      updateHud();
       lastTime = 0;
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(loop);
@@ -265,6 +258,7 @@
     function update(dt) {
       pulse += dt * 8;
       marker += dt * roundSpeed;
+      flash = Math.max(0, flash - dt * 2.2);
 
       if (feedback) {
         feedback.life -= dt;
@@ -272,7 +266,7 @@
       }
 
       scorePopups = scorePopups
-        .map((p) => ({ ...p, y: p.y - 42 * dt, life: p.life - dt }))
+        .map((p) => ({ ...p, y: p.y - 44 * dt, life: p.life - dt }))
         .filter((p) => p.life > 0);
 
       const killThreshold = 0.90;
@@ -280,8 +274,6 @@
         die();
         return;
       }
-
-      updateHud();
     }
 
     function tapAction() {
@@ -294,31 +286,34 @@
       const perfectStart = earlyH + goodH;
       const deadStart = earlyH + goodH + perfectH;
       const judgedMarker = marker;
+      const popupY = TRACK_Y + TRACK_H * judgedMarker;
 
       if (judgedMarker < goodStart) {
         const gain = Math.round(8 + combo * 0.5);
         score += gain;
         roundSpeed += 0.07;
-        feedback = { text: 'EARLY', sub: `+${gain} • SPEED UP`, color: '#60a5fa', life: 0.7 };
-        scorePopups.push({ text: `+${gain}`, x: W / 2 + 90, y: TRACK_Y + TRACK_H * judgedMarker, life: 0.9, color: '#60a5fa' });
+        feedback = { text: 'EARLY', sub: `+${gain} • SPEED UP`, color: '#4f8ff7', life: 0.7 };
+        scorePopups.push({ text: `+${gain}`, x: TRACK_X + TRACK_W + 36, y: popupY, life: 0.9, color: '#4f8ff7' });
       } else if (judgedMarker < perfectStart) {
         combo += 1;
         const gain = Math.round((20 + combo * 3) * (1 + roundSpeed));
         score += gain;
         roundSpeed += 0.03;
-        feedback = { text: 'GOOD', sub: `+${gain} • STEADY`, color: '#22c55e', life: 0.7 };
-        scorePopups.push({ text: `+${gain}`, x: W / 2 + 90, y: TRACK_Y + TRACK_H * judgedMarker, life: 0.9, color: '#22c55e' });
+        feedback = { text: 'GOOD', sub: `+${gain} • STEADY`, color: '#16a34a', life: 0.7 };
+        scorePopups.push({ text: `+${gain}`, x: TRACK_X + TRACK_W + 36, y: popupY, life: 0.9, color: '#16a34a' });
       } else if (judgedMarker < deadStart) {
         combo += 2;
         const gain = Math.round((45 + combo * 5) * (1 + roundSpeed));
         score += gain;
         roundSpeed += 0.008;
-        feedback = { text: 'PERFECT', sub: `+${gain} • CONTROLLED`, color: '#8b5cf6', life: 0.8 };
-        scorePopups.push({ text: `+${gain}`, x: W / 2 + 90, y: TRACK_Y + TRACK_H * judgedMarker, life: 1.0, color: '#8b5cf6' });
+        feedback = { text: 'PERFECT', sub: `+${gain} • CONTROLLED`, color: '#7c3aed', life: 0.8 };
+        scorePopups.push({ text: `+${gain}`, x: TRACK_X + TRACK_W + 36, y: popupY, life: 1.0, color: '#7c3aed' });
+        flash = 0.32;
       } else {
         die();
         return;
       }
+
       if (score > best) {
         best = score;
         localStorage.setItem('too-early-best', String(best));
@@ -329,37 +324,35 @@
     function die() {
       state = 'dead';
       overlayTitle.textContent = 'Too Late';
-      overlayText.textContent = `Run over. Score: ${score}. Combo: ${combo}. Hit Start and try again — it should stay fair.`;
+      overlayText.textContent = `Run over. Score: ${score}. Combo: ${combo}. Hit Start and go again.`;
       overlay.classList.remove('hidden');
-      updateHud();
+      flash = 0.45;
     }
-
-    function updateHud() {}
 
     function render() {
       ctx.clearRect(0, 0, W, H);
       drawBackground();
-      drawHeaderHint();
+      drawHud();
       drawTrack();
       drawZones();
       drawMarker();
-      drawInGameHud();
       drawFeedback();
       drawScorePopups();
+      drawFlash();
     }
 
     function drawBackground() {
       const grad = ctx.createLinearGradient(0, 0, 0, H);
-      grad.addColorStop(0, '#dbeafe');
-      grad.addColorStop(0.6, '#eff6ff');
-      grad.addColorStop(1, '#f8fbff');
+      grad.addColorStop(0, '#e7f0ff');
+      grad.addColorStop(0.6, '#f2f7ff');
+      grad.addColorStop(1, '#fafcff');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, W, H);
 
-      ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+      ctx.strokeStyle = 'rgba(148,163,184,0.10)';
       ctx.lineWidth = 2;
-      const offset = (performance.now() * 0.05) % 56;
-      for (let y = -56; y < H + 56; y += 56) {
+      const offset = (performance.now() * 0.05) % 60;
+      for (let y = -60; y < H + 60; y += 60) {
         ctx.beginPath();
         ctx.moveTo(0, y + offset);
         ctx.lineTo(W, y + offset);
@@ -367,70 +360,75 @@
       }
     }
 
-    function drawHeaderHint() {}
-
-    function drawInGameHud() {
-      ctx.fillStyle = 'rgba(255,255,255,0.78)';
-      roundRect(16, 14, W - 32, 62, 18);
+    function drawHud() {
+      ctx.fillStyle = 'rgba(255,255,255,0.80)';
+      roundRect(18, 18, W - 36, 86, 22);
       ctx.fill();
 
-      ctx.fillStyle = '#18212f';
-      ctx.textAlign = 'left';
-      ctx.font = '700 12px Inter, sans-serif';
-      ctx.fillText('SCORE', 28, 34);
-      ctx.fillText('BEST', 132, 34);
-      ctx.fillText('COMBO', 228, 34);
-      ctx.fillText('SPEED', 330, 34);
+      ctx.strokeStyle = 'rgba(148,163,184,0.18)';
+      ctx.lineWidth = 1;
+      roundRect(18, 18, W - 36, 86, 22);
+      ctx.stroke();
 
-      ctx.font = '900 22px Inter, sans-serif';
-      ctx.fillText(String(score), 28, 60);
-      ctx.fillText(String(best), 132, 60);
-      ctx.fillText(String(combo), 228, 60);
-      ctx.fillText(`${roundSpeed.toFixed(1)}x`, 330, 60);
+      const cols = [34, 132, 232, 330];
+      const labels = ['SCORE', 'BEST', 'COMBO', 'SPEED'];
+      const values = [String(score), String(best), String(combo), `${roundSpeed.toFixed(1)}x`];
+
+      ctx.textAlign = 'left';
+      for (let i = 0; i < cols.length; i++) {
+        ctx.fillStyle = '#64748b';
+        ctx.font = '700 12px Inter, sans-serif';
+        ctx.fillText(labels[i], cols[i], 48);
+        ctx.fillStyle = '#142033';
+        ctx.font = '900 24px Inter, sans-serif';
+        ctx.fillText(values[i], cols[i], 80);
+      }
     }
 
-    function drawTrack() {}
+    function drawTrack() {
+      ctx.fillStyle = 'rgba(255,255,255,0.86)';
+      roundRect(TRACK_X - 18, TRACK_Y - 16, TRACK_W + 36, TRACK_H + 84, 30);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(59,130,246,0.12)';
+      ctx.lineWidth = 1.5;
+      roundRect(TRACK_X - 18, TRACK_Y - 16, TRACK_W + 36, TRACK_H + 84, 30);
+      ctx.stroke();
+    }
 
     function drawZones() {
       const earlyH = TRACK_H * 0.64;
       const goodH = TRACK_H * 0.16;
       const perfectH = TRACK_H * 0.10;
       const deadH = 4;
-      const deadGap = 0;
       const perfectBottom = TRACK_Y + earlyH + goodH + perfectH;
 
-      const zoneW = TRACK_W;
-      const zoneX = TRACK_X;
+      ctx.fillStyle = '#9fc5ff';
+      ctx.fillRect(TRACK_X, TRACK_Y, TRACK_W, earlyH);
 
-      ctx.fillStyle = 'rgba(147,197,253,0.72)';
-      ctx.fillRect(zoneX, TRACK_Y, zoneW, earlyH);
+      ctx.fillStyle = '#91f0b0';
+      ctx.fillRect(TRACK_X, TRACK_Y + earlyH, TRACK_W, goodH);
 
-      ctx.fillStyle = 'rgba(134,239,172,0.88)';
-      ctx.fillRect(zoneX, TRACK_Y + earlyH, zoneW, goodH);
+      ctx.fillStyle = '#ccb7ff';
+      ctx.fillRect(TRACK_X, TRACK_Y + earlyH + goodH, TRACK_W, perfectH);
 
-      ctx.fillStyle = 'rgba(196,181,253,0.95)';
-      ctx.fillRect(zoneX, TRACK_Y + earlyH + goodH, zoneW, perfectH);
+      ctx.fillStyle = '#ff9ca8';
+      ctx.fillRect(TRACK_X, perfectBottom, TRACK_W, deadH);
 
-      ctx.fillStyle = 'rgba(252,165,165,1)';
-      ctx.fillRect(zoneX, perfectBottom + deadGap, zoneW, deadH);
-
-      ctx.fillStyle = '#18212f';
-      ctx.font = '700 12px Inter, sans-serif';
+      ctx.fillStyle = '#17243a';
       ctx.textAlign = 'center';
-      ctx.fillText('EARLY', W / 2, TRACK_Y - 14);
+      ctx.font = '800 13px Inter, sans-serif';
+      ctx.fillText('EARLY', W / 2, TRACK_Y - 16);
       ctx.fillText('GOOD', W / 2, TRACK_Y + earlyH + goodH / 2 + 5);
-      ctx.fillText('PERFECT', W / 2, TRACK_Y + earlyH + goodH + perfectH / 2 + 2);
-      ctx.fillText('DEAD', W / 2, perfectBottom + deadH + 18);
+      ctx.fillText('PERFECT', W / 2, TRACK_Y + earlyH + goodH + perfectH / 2 + 4);
+      ctx.fillText('DEAD', W / 2, perfectBottom + 24);
     }
 
     function drawMarker() {
       const y = TRACK_Y + TRACK_H * marker;
-
       ctx.strokeStyle = '#ffffff';
-      ctx.shadowColor = 'rgba(255,255,255,0.28)';
+      ctx.shadowColor = 'rgba(255,255,255,0.55)';
       ctx.shadowBlur = 18;
       ctx.lineWidth = 4;
-      ctx.lineCap = 'butt';
       ctx.beginPath();
       ctx.moveTo(TRACK_X, y);
       ctx.lineTo(TRACK_X + TRACK_W, y);
@@ -443,22 +441,28 @@
       ctx.globalAlpha = Math.max(0, feedback.life);
       ctx.fillStyle = feedback.color;
       ctx.textAlign = 'center';
-      ctx.font = '900 36px Inter, sans-serif';
-      ctx.fillText(feedback.text, W / 2, TRACK_Y + TRACK_H / 2 - 10);
-      ctx.font = '800 24px Inter, sans-serif';
-      ctx.fillText(feedback.sub, W / 2, TRACK_Y + TRACK_H / 2 + 24);
+      ctx.font = '900 40px Inter, sans-serif';
+      ctx.fillText(feedback.text, W / 2, 136);
+      ctx.font = '800 22px Inter, sans-serif';
+      ctx.fillText(feedback.sub, W / 2, 164);
       ctx.globalAlpha = 1;
     }
 
     function drawScorePopups() {
       ctx.textAlign = 'left';
-      ctx.font = '900 22px Inter, sans-serif';
+      ctx.font = '900 24px Inter, sans-serif';
       for (const p of scorePopups) {
         ctx.globalAlpha = Math.max(0, p.life);
         ctx.fillStyle = p.color;
         ctx.fillText(p.text, p.x, p.y);
       }
       ctx.globalAlpha = 1;
+    }
+
+    function drawFlash() {
+      if (flash <= 0) return;
+      ctx.fillStyle = `rgba(255,255,255,${flash * 0.32})`;
+      ctx.fillRect(0, 0, W, H);
     }
 
     function roundRect(x, y, w, h, r) {
@@ -495,7 +499,6 @@
 
     startBtn.addEventListener('click', resetGame);
 
-    updateHud();
     render();
   </script>
 </body>
