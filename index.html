@@ -287,29 +287,37 @@
     function tapAction() {
       if (state !== 'playing') return;
 
-      const goodStart = 0.68;
-      const perfectStart = 0.86;
+      const earlyH = 0.64;
+      const goodH = 0.16;
+      const perfectH = 0.10;
+      const goodStart = earlyH;
+      const perfectStart = earlyH + goodH;
+      const deadStart = earlyH + goodH + perfectH;
+      const judgedMarker = marker;
 
-      if (marker < goodStart) {
+      if (judgedMarker < goodStart) {
         const gain = Math.round(8 + combo * 0.5);
         score += gain;
         roundSpeed += 0.07;
         feedback = { text: 'EARLY', sub: `+${gain} • SPEED UP`, color: '#60a5fa', life: 0.7 };
-        scorePopups.push({ text: `+${gain}`, x: W / 2 + 90, y: TRACK_Y + TRACK_H * marker, life: 0.9, color: '#60a5fa' });
-      } else if (marker < perfectStart) {
+        scorePopups.push({ text: `+${gain}`, x: W / 2 + 90, y: TRACK_Y + TRACK_H * judgedMarker, life: 0.9, color: '#60a5fa' });
+      } else if (judgedMarker < perfectStart) {
         combo += 1;
         const gain = Math.round((20 + combo * 3) * (1 + roundSpeed));
         score += gain;
         roundSpeed += 0.03;
         feedback = { text: 'GOOD', sub: `+${gain} • STEADY`, color: '#22c55e', life: 0.7 };
-        scorePopups.push({ text: `+${gain}`, x: W / 2 + 90, y: TRACK_Y + TRACK_H * marker, life: 0.9, color: '#22c55e' });
-      } else {
+        scorePopups.push({ text: `+${gain}`, x: W / 2 + 90, y: TRACK_Y + TRACK_H * judgedMarker, life: 0.9, color: '#22c55e' });
+      } else if (judgedMarker < deadStart) {
         combo += 2;
         const gain = Math.round((45 + combo * 5) * (1 + roundSpeed));
         score += gain;
         roundSpeed += 0.008;
         feedback = { text: 'PERFECT', sub: `+${gain} • CONTROLLED`, color: '#8b5cf6', life: 0.8 };
-        scorePopups.push({ text: `+${gain}`, x: W / 2 + 90, y: TRACK_Y + TRACK_H * marker, life: 1.0, color: '#8b5cf6' });
+        scorePopups.push({ text: `+${gain}`, x: W / 2 + 90, y: TRACK_Y + TRACK_H * judgedMarker, life: 1.0, color: '#8b5cf6' });
+      } else {
+        die();
+        return;
       }
       if (score > best) {
         best = score;
