@@ -389,7 +389,7 @@
       const goodH = TRACK_H * 0.16;
       const perfectH = TRACK_H * 0.10;
       const deadH = 26;
-      const deadGap = 18;
+      const deadGap = 6;
 
       const zoneW = TRACK_W;
       const zoneX = TRACK_X;
@@ -412,7 +412,7 @@
       ctx.fillText('EARLY', W / 2, TRACK_Y - 14);
       ctx.fillText('GOOD', W / 2, TRACK_Y + earlyH + goodH / 2 + 5);
       ctx.fillText('PERFECT', W / 2, TRACK_Y + earlyH + goodH + perfectH / 2 + 2);
-      ctx.fillText('DEAD', W / 2, TRACK_Y + TRACK_H + deadGap + deadH + 18);
+      ctx.fillText('DEAD', W / 2, TRACK_Y + TRACK_H + deadGap + deadH + 16);
     }
 
     function drawMarker() {
