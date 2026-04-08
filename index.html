@@ -6,14 +6,14 @@
   <title>Too Early</title>
   <style>
     :root {
-      --bg: #0b0d10;
-      --panel: rgba(15, 17, 21, 0.97);
-      --text: #f5f5f5;
-      --muted: #9ca3af;
-      --early: #d1d5db;
-      --good: #a3a3a3;
-      --perfect: #737373;
-      --danger: #262626;
+      --bg: #eef4ff;
+      --panel: rgba(255, 255, 255, 0.9);
+      --text: #18212f;
+      --muted: #64748b;
+      --early: #93c5fd;
+      --good: #86efac;
+      --perfect: #c4b5fd;
+      --danger: #fca5a5;
       --line: #ffffff;
     }
 
@@ -30,7 +30,7 @@
       display: grid;
       place-items: center;
       padding: 4px;
-      background: linear-gradient(180deg, #111315 0%, #0b0d10 100%);
+      background: linear-gradient(180deg, #dbeafe 0%, #eef4ff 100%);
       color: var(--text);
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     }
@@ -38,8 +38,8 @@
     .phone {
       width: min(100vw, 460px);
       height: min(100vh, 980px);
-      background: linear-gradient(180deg, rgba(20,22,26,0.98), rgba(12,14,17,0.98));
-      border: 1px solid rgba(255,255,255,0.08);
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(241,245,249,0.96));
+      border: 1px solid rgba(148,163,184,0.25);
       border-radius: 34px;
       box-shadow: 0 40px 100px rgba(0,0,0,.45);
       overflow: hidden;
@@ -175,7 +175,7 @@
       font-weight: 900;
       font-size: 1rem;
       cursor: pointer;
-      background: linear-gradient(135deg, #2b2f36, #1b1e23);
+      background: linear-gradient(135deg, #60a5fa, #3b82f6);
       color: white;
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 12px 30px rgba(0,0,0,.25);
     }
@@ -312,17 +312,17 @@
       if (marker < goodStart) {
         const gain = Math.round(8 + combo * 0.5);
         score += gain;
-        feedback = { text: 'EARLY', sub: `+${gain}`, color: '#e5e7eb', life: 0.7 };
+        feedback = { text: 'EARLY', sub: `+${gain}`, color: '#60a5fa', life: 0.7 };
       } else if (marker < perfectStart) {
         combo += 1;
         const gain = Math.round((20 + combo * 3) * (1 + roundSpeed));
         score += gain;
-        feedback = { text: 'GOOD', sub: `+${gain}`, color: '#d4d4d8', life: 0.7 };
+        feedback = { text: 'GOOD', sub: `+${gain}`, color: '#22c55e', life: 0.7 };
       } else {
         combo += 2;
         const gain = Math.round((45 + combo * 5) * (1 + roundSpeed));
         score += gain;
-        feedback = { text: 'PERFECT', sub: `+${gain}`, color: '#ffffff', life: 0.8 };
+        feedback = { text: 'PERFECT', sub: `+${gain}`, color: '#8b5cf6', life: 0.8 };
       }
 
       roundSpeed = Math.min(1.15, roundSpeed + 0.025);
@@ -360,9 +360,9 @@
 
     function drawBackground() {
       const grad = ctx.createLinearGradient(0, 0, 0, H);
-      grad.addColorStop(0, '#181b20');
-      grad.addColorStop(0.6, '#111317');
-      grad.addColorStop(1, '#0b0d10');
+      grad.addColorStop(0, '#dbeafe');
+      grad.addColorStop(0.6, '#eff6ff');
+      grad.addColorStop(1, '#f8fbff');
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, W, H);
 
@@ -392,19 +392,19 @@
       const zoneW = TRACK_W;
       const zoneX = TRACK_X;
 
-      ctx.fillStyle = 'rgba(209,213,219,0.55)';
+      ctx.fillStyle = 'rgba(147,197,253,0.72)';
       ctx.fillRect(zoneX, TRACK_Y, zoneW, earlyH);
 
-      ctx.fillStyle = 'rgba(163,163,163,0.75)';
+      ctx.fillStyle = 'rgba(134,239,172,0.88)';
       ctx.fillRect(zoneX, TRACK_Y + earlyH, zoneW, goodH);
 
-      ctx.fillStyle = 'rgba(115,115,115,0.92)';
+      ctx.fillStyle = 'rgba(196,181,253,0.95)';
       ctx.fillRect(zoneX, TRACK_Y + earlyH + goodH, zoneW, perfectH);
 
-      ctx.fillStyle = 'rgba(38,38,38,1)';
+      ctx.fillStyle = 'rgba(252,165,165,1)';
       ctx.fillRect(zoneX, perfectBottom + deadGap, zoneW, deadH);
 
-      ctx.fillStyle = '#f5f5f5';
+      ctx.fillStyle = '#18212f';
       ctx.font = '700 12px Inter, sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText('EARLY', W / 2, TRACK_Y - 14);
