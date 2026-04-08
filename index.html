@@ -380,16 +380,7 @@
       }
     }
 
-    function drawHeaderHint() {
-      ctx.fillStyle = 'rgba(4, 12, 20, 0.72)';
-      roundRect(16, 16, W - 32, 64, 18);
-      ctx.fill();
-      ctx.fillStyle = '#d6eaff';
-      ctx.textAlign = 'center';
-      ctx.font = '700 16px Inter, sans-serif';
-      ctx.fillText('Tap before the marker reaches the bottom red zone.', W / 2, 44);
-      ctx.fillText('Later = more points', W / 2, 66);
-    }
+    function drawHeaderHint() {}
 
     function drawTrack() {
       ctx.fillStyle = 'rgba(255,255,255,0.08)';
@@ -402,28 +393,39 @@
       const goodH = TRACK_H * 0.14;
       const perfectH = TRACK_H * 0.10;
 
+      const earlyW = TRACK_W;
+      const goodW = TRACK_W * 0.74;
+      const perfectW = TRACK_W * 0.56;
+      const deadW = TRACK_W * 0.40;
+
+      const centerX = W / 2;
+      const earlyX = centerX - earlyW / 2;
+      const goodX = centerX - goodW / 2;
+      const perfectX = centerX - perfectW / 2;
+      const deadX = centerX - deadW / 2;
+
       ctx.fillStyle = 'rgba(34,211,238,0.38)';
-      roundRect(TRACK_X, TRACK_Y, TRACK_W, earlyH, 34);
+      roundRect(earlyX, TRACK_Y, earlyW, earlyH, 34);
       ctx.fill();
 
-      ctx.fillStyle = 'rgba(52,211,153,0.48)';
-      roundRect(TRACK_X, TRACK_Y + earlyH, TRACK_W, goodH, 0);
+      ctx.fillStyle = 'rgba(52,211,153,0.52)';
+      roundRect(goodX, TRACK_Y + earlyH, goodW, goodH, 34);
       ctx.fill();
 
-      ctx.fillStyle = 'rgba(168,85,247,0.55)';
-      roundRect(TRACK_X, TRACK_Y + earlyH + goodH, TRACK_W, perfectH, 34);
+      ctx.fillStyle = 'rgba(168,85,247,0.6)';
+      roundRect(perfectX, TRACK_Y + earlyH + goodH, perfectW, perfectH, 34);
       ctx.fill();
 
-      ctx.fillStyle = 'rgba(251,113,133,0.82)';
-      roundRect(TRACK_X - 10, TRACK_Y + TRACK_H - 22, TRACK_W + 20, 28, 12);
+      ctx.fillStyle = 'rgba(251,113,133,0.9)';
+      roundRect(deadX, TRACK_Y + TRACK_H - 26, deadW, 26, 34);
       ctx.fill();
 
       ctx.fillStyle = '#eef8ff';
       ctx.font = '700 12px Inter, sans-serif';
       ctx.textAlign = 'center';
       ctx.fillText('EARLY', W / 2, TRACK_Y - 14);
-      ctx.fillText('GOOD', W / 2, TRACK_Y + earlyH + 22);
-      ctx.fillText('PERFECT', W / 2, TRACK_Y + earlyH + goodH + 22);
+      ctx.fillText('GOOD', W / 2, TRACK_Y + earlyH + goodH / 2 + 5);
+      ctx.fillText('PERFECT', W / 2, TRACK_Y + earlyH + goodH + perfectH / 2 + 5);
       ctx.fillText('DEAD', W / 2, TRACK_Y + TRACK_H + 28);
     }
 
